@@ -29,9 +29,9 @@ We consider dividing the RL algorithms into several parts:
 | Algorithm | Type | Paper |Code|
 | ------- | ------- | ------- | ------- |
 | Deep Q-learning | Value-based | [[Paper]](https://arxiv.org/pdf/1312.5602.pdf) | [[Code]](apis/DeepQ.py) |
-| Proximal Policy Optimization | Policy-based | [[Ppaer]](https://arxiv.org/abs/1707.06347) | [[Code]](apis/PPO.py) |
-| Deep Deterministic Policy Gradient | Policy-based | [[Ppaer]](https://arxiv.org/pdf/1509.02971.pdf) | [[Code]](apis/DDPG.py) |
-| Soft Actor-Critic Discrete | Policy-based | [[Ppaer]](https://arxiv.org/pdf/1910.07207) | [[Code]](apis/SACDiscrete.py) |
+| Proximal Policy Optimization | Policy-based | [[Paper]](https://arxiv.org/abs/1707.06347) | [[Code]](apis/PPO.py) |
+| Deep Deterministic Policy Gradient | Policy-based | [[Paper]](https://arxiv.org/pdf/1509.02971.pdf) | [[Code]](apis/DDPG.py) |
+| Soft Actor-Critic Discrete | Policy-based | [[Paper]](https://arxiv.org/pdf/1910.07207) | [[Code]](apis/SACDiscrete.py) |
 
 # Example
 Run the following example code for training a Deep Q-learning agent:
