@@ -28,8 +28,8 @@ class DDPG:
             action_high,
             actor_kwargs,
             critic_kwargs,
-            replayer_capacity=100000,
-            replayer_initial_transitions=10000,
+            replayer_capacity=20000,
+            replayer_initial_transitions=2000,
             gamma=0.99,
             tau=0.005,
             noise_scale=0.1,
@@ -46,7 +46,7 @@ class DDPG:
         self.gamma = gamma
         self.tau = tau
         self.noise_scale = noise_scale
-        self.noise = OUProcess(size=(action_dim,), sigma=noise_scale)
+        self.noise = OUProcess(size=(action_dim,))
         self.noise.reset()
         self.explore = explore
         self.batches = batches
@@ -81,12 +81,13 @@ class DDPG:
                 self.replayer_initial_transitions:
             return np.random.uniform(self.action_low, self.action_high)
 
-        state_tensor = torch.from_numpy(state).to(self.device)
+        state_tensor = torch.FloatTensor(state).to(self.device)
         state_tensor = torch.unsqueeze(state_tensor, dim=0)
-        action = self.actor_eval(state_tensor)[0]
+        action = self.actor_eval(state_tensor).detach().cpu().numpy()[0]
+
         if self.explore:
             noise = self.noise()
-            action = np.clip(action + noise, self.action_low, self.action_high)
+            action = np.clip(action + noise, self.action_low, self.action_high)[0]
         return action
 
     def learn(self, state, action, reward, next_state, done):
@@ -95,42 +96,43 @@ class DDPG:
         if self.replayer.count >= self.replayer_initial_transitions:
             if done:
                 self.noise.reset()
-                for batch in range(self.batches):
-                    states_, actions_, rewards_, next_states_, dones_ = \
-                        self.replayer.sample(self.batch_size)
+            for batch in range(self.batches):
+                states_, actions_, rewards_, next_states_, dones_ = \
+                    self.replayer.sample(self.batch_size)
 
-                    batch_state = torch.FloatTensor(states_).to(self.device)
-                    batch_action = torch.from_numpy(actions_).to(self.device)
-                    batch_reward = torch.FloatTensor(rewards_).to(self.device)
-                    batch_next_state = torch.FloatTensor(next_states_).to(self.device)
-                    batch_done = torch.from_numpy(dones_).to(self.device)
+                batch_state = torch.FloatTensor(states_).to(self.device)
+                batch_action = torch.FloatTensor(actions_).to(self.device)
+                batch_reward = torch.FloatTensor(rewards_).to(self.device)
+                batch_next_state = torch.FloatTensor(next_states_).to(self.device)
+                batch_done = torch.from_numpy(dones_).to(self.device)
 
-                    ''' update actor '''
-                    action_tensor = self.actor_eval(batch_state)
-                    action_tensor = action_tensor.clamp(self.action_low, self.action_high)
-                    q_tensor = self.critic_eval(batch_state, action_tensor)
+                ''' update critic '''
+                batch_next_action = self.actor_target(batch_next_state)
+                noise_tensor = (0.2 * torch.randn_like(batch_action.unsqueeze(1), dtype=torch.float))
+                batch_next_action = (batch_next_action + noise_tensor).clamp(self.action_low, self.action_high)
+                next_qs = self.critic_target(batch_next_state, batch_next_action)
+                qs = self.critic_eval(batch_state, batch_action.unsqueeze(1)).squeeze(1)
+                q_targets = batch_reward + self.gamma * torch.logical_not(batch_done) * next_qs[:, 0]
 
-                    self.optimizer_actor_eval.zero_grad()
-                    actor_loss = - q_tensor.mean()
-                    actor_loss.backward()
-                    self.optimizer_actor_eval.step()
+                self.optimizer_critic_eval.zero_grad()
+                critic_loss = F.mse_loss(qs, q_targets)
+                critic_loss.backward()
+                self.optimizer_critic_eval.step()
 
-                    ''' update critic '''
-                    batch_next_action = self.actor_target(batch_next_state)
-                    noise_tensor = (0.2 * torch.randn_like(action_tensor, dtype=torch.float))
-                    batch_next_action = (batch_next_action + noise_tensor).clamp(self.action_low, self.action_high)
-                    next_qs = self.critic_target(batch_next_state, batch_next_action)
-                    qs = self.critic_eval(batch_state, batch_action).squeeze(1)
-                    q_targets = batch_reward + self.gamma * torch.logical_not(batch_done) * next_qs[:, 0]
+                ''' update actor '''
+                action_tensor = self.actor_eval(batch_state)
+                action_tensor = action_tensor.clamp(self.action_low, self.action_high)
+                q_tensor = self.critic_eval(batch_state, action_tensor)
 
-                    self.optimizer_critic_eval.zero_grad()
-                    critic_loss = F.mse_loss(qs, q_targets)
-                    critic_loss.backward()
-                    self.optimizer_critic_eval.step()
+                self.optimizer_actor_eval.zero_grad()
+                actor_loss = - q_tensor.mean()
+                actor_loss.backward()
+                self.optimizer_actor_eval.step()
 
-                    ''' update target networks '''
-                    self.update_target_net(self.actor_target, self.actor_eval)
-                    self.update_target_net(self.critic_target, self.critic_eval)
+                ''' update target networks '''
+                self.update_target_net(self.actor_target, self.actor_eval)
+                self.update_target_net(self.critic_target, self.critic_eval)
+
 
     def save(self, save_dir, epoch):
-        torch.save(self.actor_eval, '{}/ql_eval_net_epoch{}.pth'.format(save_dir, epoch))
+        torch.save(self.actor_eval, '{}/ddpg_policy_epoch{}.pth'.format(save_dir, epoch))

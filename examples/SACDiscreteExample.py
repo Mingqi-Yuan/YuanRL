@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 __author__ = 'Mingqi Yuan'
 """
-An example of the Deep Q-learning.
+An example of the Soft Actor-Critic Discrete.
 """
 
 import torch
@@ -9,18 +9,21 @@ import gym
 import sys
 import os
 sys.path.append(os.path.dirname(__file__) + os.sep + '../')
-from apis.DeepQ import DeepQ
+from apis.SACDiscrete import SACDiscrete
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-env = gym.make('MountainCar-v0')
+env = gym.make('Acrobot-v1')
 env.seed(0)
+actor_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': 1}
+critic_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
 
-qnet_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
-agent = DeepQ(
+agent = SACDiscrete(
     device=device,
-    qnet_kwargs=qnet_kwargs,
-    state_dim=2,
-    action_dim=3,
+    state_dim=env.observation_space.shape[0],
+    action_dim=env.action_space.n,
+    actor_kwargs=actor_kwargs,
+    critic_kwargs=critic_kwargs,
+    replayer_initial_transitions=1000,
     lr=1e-3
 )
 

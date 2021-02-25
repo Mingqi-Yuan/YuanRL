@@ -17,7 +17,7 @@ class ActorDis(nn.Module):
         self.fc4 = nn.Linear(256, kwargs['output_dim'])
 
         self.relu = nn.ReLU()
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Softmax(dim=1)
         self.dropout = nn.Dropout(p=0.1)
 
     def forward(self, state):

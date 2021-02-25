@@ -25,7 +25,8 @@ class DeepQ:
             qnet_kwargs,
             gamma=0.99, 
             epsilon=0.001,
-            replayer_capacity=10000, 
+            replayer_capacity=10000,
+            replayer_initial_transitions=5000,
             batch_size=64,
             lr=1e-3
     ):
@@ -38,6 +39,7 @@ class DeepQ:
         self.batch_size = batch_size
         self.lr = lr
         self.replayer = DQNReplayer(replayer_capacity)
+        self.replayer_initial_transitions = replayer_initial_transitions
 
         self.eval_net = QND(qnet_kwargs)
         self.target_net = QND(qnet_kwargs)
@@ -51,29 +53,31 @@ class DeepQ:
     def learn(self, state, action, reward, next_state, done):
         self.replayer.store(state, action, reward, next_state, done)
 
-        states_, actions_, rewards_, next_states_, dones_ = \
-            self.replayer.sample(self.batch_size)
+        ''' skip few episodes for rapid exploration '''
+        if self.replayer.count >= self.replayer_initial_transitions:
+            states_, actions_, rewards_, next_states_, dones_ = \
+                self.replayer.sample(self.batch_size)
 
-        batch_state = torch.FloatTensor(states_).to(self.device)
-        batch_action = torch.from_numpy(actions_).to(self.device)
-        batch_reward = torch.FloatTensor(rewards_).to(self.device)
-        batch_next_state = torch.FloatTensor(next_states_).to(self.device)
-        batch_done = torch.from_numpy(dones_).to(self.device)
+            batch_state = torch.FloatTensor(states_).to(self.device)
+            batch_action = torch.from_numpy(actions_).to(self.device)
+            batch_reward = torch.FloatTensor(rewards_).to(self.device)
+            batch_next_state = torch.FloatTensor(next_states_).to(self.device)
+            batch_done = torch.from_numpy(dones_).to(self.device)
 
-        next_qs = self.target_net(batch_next_state)
-        next_max_qs, _ = torch.max(next_qs, dim=1)
-        q_targets = batch_reward + self.gamma * torch.logical_not(batch_done) * next_max_qs
-        qs = self.eval_net(batch_state)
-        qs = torch.gather(qs, 1, batch_action.unsqueeze(1)).squeeze(1)
+            next_qs = self.target_net(batch_next_state)
+            next_max_qs, _ = torch.max(next_qs, dim=1)
+            q_targets = batch_reward + self.gamma * torch.logical_not(batch_done) * next_max_qs
+            qs = self.eval_net(batch_state)
+            qs = torch.gather(qs, 1, batch_action.unsqueeze(1)).squeeze(1)
 
-        ''' update network '''
-        self.optimizer_eval_net.zero_grad()
-        eval_net_loss = F.mse_loss(qs, q_targets)
-        eval_net_loss.backward()
-        self.optimizer_eval_net.step()
+            ''' update network '''
+            self.optimizer_eval_net.zero_grad()
+            eval_net_loss = F.mse_loss(qs, q_targets)
+            eval_net_loss.backward()
+            self.optimizer_eval_net.step()
 
-        if done:
-            self.target_net.load_state_dict(self.eval_net.state_dict())
+            if done:
+                self.target_net.load_state_dict(self.eval_net.state_dict())
 
     def decide(self, state):
         # epsilon-greedy policy
@@ -87,4 +91,4 @@ class DeepQ:
         return action.detach().cpu().numpy()[0]
 
     def save(self, save_dir, epoch):
-        torch.save(self.eval_net, '{}/ql_eval_net_epoch{}.pth'.format(save_dir, epoch))
+        torch.save(self.eval_net, '{}/ql_policy_epoch{}.pth'.format(save_dir, epoch))
