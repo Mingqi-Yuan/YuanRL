@@ -1,5 +1,5 @@
 <div align='center'>
-    <img src= 'https://github.com/Mingqi-Yuan/ADMP/blob/master/examples/logo.png'>
+    <img src= 'https://github.com/Mingqi-Yuan/YuanRL/blob/master/examples/logo.png'>
 </div>
 
 
@@ -26,7 +26,7 @@ We consider dividing the RL algorithms into several parts:
 
 # Example
 Run the following example code for training a Deep Q-learning agent:
-```
+```python
 import torch
 import gym
 import sys
