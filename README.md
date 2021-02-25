@@ -1,5 +1,5 @@
 <div align='center'>
-    <img src= 'https://github.com/Mingqi-Yuan/YuanRL/blob/master/examples/logo.png'>
+    <img src= 'https://github.com/Mingqi-Yuan/YuanRL/blob/main/examples/logo.png' width=620px height=175px>
 </div>
 
 
