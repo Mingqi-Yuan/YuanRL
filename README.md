@@ -1,5 +1,5 @@
 <div align='center'>
-    <img src= 'https://mail.qq.com/cgi-bin/ftnDownload302?sid=9nmejk1-YL_IL2YG&fid=2%2F4ab6a72d-58c5-4259-923f-8dba83b6f145&code=b6968546&k=5f363936026bc9c9edf5e67f1e35061956575b00590206524f0301550d180004570f140f0a06521b5a525b570006560004070d03383d345a0d515618485b53365f' width=620px height=175px>
+    <img src= 'https://github.com/Mingqi-Yuan/YuanRL/blob/master/examples/logo.png' width=620px height=175px>
 </div>
 
 
