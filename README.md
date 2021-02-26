@@ -1,5 +1,5 @@
 <div align='center'>
-    <img src= 'https://github.com/Mingqi-Yuan/YuanRL/blob/master/examples/logo.png' width=620px height=175px>
+    <img src= 'https://img-blog.csdnimg.cn/20210225200756161.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MjQ5OTIzNg==,size_16,color_FFFFFF,t_70#pic_center' width=932px height=249px>
 </div>
 
 
@@ -45,6 +45,7 @@ from apis.DeepQ import DeepQ
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('MountainCar-v0')
+env.seed(0)
 qnet_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
 agent = DeepQ(
     device=device,
