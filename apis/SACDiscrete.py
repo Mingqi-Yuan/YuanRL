@@ -28,7 +28,7 @@ class SACDiscrete:
             actor_kwargs,
             critic_kwargs,
             det=False,
-            gamma=0.01,
+            gamma=0.99,
             tau=0.005,
             replayer_capacity=10000,
             replayer_initial_transitions=5000,
@@ -48,9 +48,10 @@ class SACDiscrete:
         self.replayer = DQNReplayer(replayer_capacity)
         self.replayer_initial_transitions = replayer_initial_transitions
 
-        self.entropy_target = 0.98 * (-np.log(1 / self.action_dim))
-        self.log_alpha = torch.zeros(1, requires_grad=True, device=self.device)
-        self.alpha = self.log_alpha.exp()
+        # self.entropy_target = 0.98 * (-np.log(1 / self.action_dim))
+        # self.log_alpha = torch.zeros(1, requires_grad=True, device=self.device)
+        # self.alpha = self.log_alpha.exp()
+        self.alpha = 0.02
 
         self.det = det
         self.actor = ActorDis(actor_kwargs)
@@ -68,21 +69,17 @@ class SACDiscrete:
         self.optimizer_actor = optim.Adam(self.actor.parameters(), lr=self.lr)
         self.optimizer_qf1 = optim.Adam(self.qf1_eval.parameters(), lr=self.lr)
         self.optimizer_qf2 = optim.Adam(self.qf2_eval.parameters(), lr=self.lr)
-        self.optimizer_alpha = optim.Adam([self.log_alpha], lr=self.lr)
+        # self.optimizer_alpha = optim.Adam([self.log_alpha], lr=self.lr)
 
         ''' load weights '''
-        self.qf1_target.load_state_dict(self.qf1_target.state_dict())
-        self.qf2_target.load_state_dict(self.qf2_target.state_dict())
+        self.qf1_target.load_state_dict(self.qf1_eval.state_dict())
+        self.qf2_target.load_state_dict(self.qf2_eval.state_dict())
 
     def update_target_net(self, target_net, eval_net):
         for target_params, params in zip(target_net.parameters(), eval_net.parameters()):
             target_params.data.copy_(
                 target_params.data * (1.0 - self.tau) + params.data * self.tau
             )
-
-    def sac_loss(self, y_true, y_pred):
-        qs = self.alpha.detach() * y_pred * torch.log(y_pred) - y_pred * y_true
-        return torch.sum(qs, dim=1).mean()
 
     def learn(self, state, action, reward, next_state, done):
         self.replayer.store(state, action, reward, next_state, done)
@@ -100,9 +97,10 @@ class SACDiscrete:
 
                 ''' update action value function '''
                 with torch.no_grad():
-                    probs_next = self.actor(batch_next_state)
-                    qs1_next, qs2_next = self.qf1_eval(batch_state), self.qf2_eval(batch_next_state)
-                    qs_next = torch.minimum(qs1_next, qs2_next)
+                    probs_next = self.actor(batch_next_state).clamp(1e-4, 0.999)
+                    qs1_next = self.qf1_target(batch_next_state)
+                    qs2_next = self.qf2_target(batch_next_state)
+                    qs_next = torch.min(qs1_next, qs2_next)
                     vs_next = probs_next * (qs_next - self.alpha * torch.log(probs_next))
                     vs_next = torch.sum(vs_next, dim=1)
                     qs_target = batch_reward + self.gamma * torch.logical_not(batch_done) * vs_next
@@ -119,23 +117,25 @@ class SACDiscrete:
                 self.optimizer_qf2.step()
 
                 ''' update actor '''
-                probs = self.actor(batch_state)
+                probs = self.actor(batch_state).clamp(1e-4, 0.999)
                 with torch.no_grad():
-                    qs1, qs2 = self.qf1_eval(batch_state), self.qf2_eval(batch_state)
-                    qs = torch.minimum(qs1, qs2)
+                    qs1 = self.qf1_eval(batch_state)
+                    qs2 = self.qf2_eval(batch_state)
+                    qs = torch.min(qs1, qs2)
 
                 self.optimizer_actor.zero_grad()
-                actor_loss = self.sac_loss(qs, probs)
+                actor_loss = self.alpha * probs * torch.log(probs) - probs * qs
+                actor_loss = actor_loss.sum(dim=1).mean()
                 actor_loss.backward()
                 self.optimizer_actor.step()
 
-                ''' update temperature '''
-                self.optimizer_alpha.zero_grad()
-                log_pis = (probs * torch.log(probs)).sum(-1)
-                alpha_loss = -(self.log_alpha * (log_pis.detach() + self.entropy_target)).mean()
-                alpha_loss.backward()
-                self.optimizer_alpha.step()
-                self.alpha = self.log_alpha.exp()
+                # ''' update temperature '''
+                # self.optimizer_alpha.zero_grad()
+                # log_probs = (probs * torch.log(probs)).sum(-1)
+                # alpha_loss = - (self.log_alpha * (log_probs.detach() + self.entropy_target)).mean()
+                # alpha_loss.backward()
+                # self.optimizer_alpha.step()
+                # self.alpha = self.log_alpha.exp()
 
                 ''' update target Q '''
                 self.update_target_net(self.qf1_target, self.qf1_eval)
@@ -146,11 +146,10 @@ class SACDiscrete:
             state_tensor = torch.from_numpy(state).float()
             state_tensor = torch.unsqueeze(state_tensor, dim=0)
 
-            prob = self.actor(state_tensor.to(self.device))
-
+            prob = self.actor(state_tensor.to(self.device)).clamp(1e-4, 0.999)
             ''' deterministic policy '''
             if self.det:
-                action, _ = torch.argmax(prob, dim=1)
+                action = torch.argmax(prob, dim=1)
             else:
                 policy = Categorical(prob)
                 action = policy.sample()

@@ -3,18 +3,23 @@ __author__ = 'Mingqi Yuan'
 """
 An example of the Soft Actor-Critic Discrete.
 """
-
+import logging
 import torch
 import gym
 import sys
 import os
+
+logging.basicConfig(level=logging.DEBUG,
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+
 from apis.SACDiscrete import SACDiscrete
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('Acrobot-v1')
 env.seed(0)
-actor_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': 1}
+actor_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
 critic_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
 
 agent = SACDiscrete(
@@ -23,8 +28,10 @@ agent = SACDiscrete(
     action_dim=env.action_space.n,
     actor_kwargs=actor_kwargs,
     critic_kwargs=critic_kwargs,
+    det=False,
+    replayer_capacity=10000,
     replayer_initial_transitions=1000,
-    lr=1e-3
+    lr=3e-4
 )
 
 for game in range(1000):
@@ -43,4 +50,4 @@ for game in range(1000):
 
         state = next_state
 
-    print('INFO: Round={}, Episode reward={}'.format(game+1, episode_reward))
+    logging.info('Episode={}, Reward={}'.format(game+1, episode_reward))

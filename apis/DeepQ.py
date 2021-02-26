@@ -53,7 +53,6 @@ class DeepQ:
     def learn(self, state, action, reward, next_state, done):
         self.replayer.store(state, action, reward, next_state, done)
 
-        ''' skip few episodes for rapid exploration '''
         if self.replayer.count >= self.replayer_initial_transitions:
             states_, actions_, rewards_, next_states_, dones_ = \
                 self.replayer.sample(self.batch_size)

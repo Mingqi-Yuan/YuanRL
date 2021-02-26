@@ -4,11 +4,17 @@ __author__ = 'Mingqi Yuan'
 An example of the Deep Q-learning.
 """
 
+import logging
 import torch
 import gym
 import sys
 import os
+
+logging.basicConfig(level=logging.DEBUG,
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+
 from apis.DeepQ import DeepQ
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -40,4 +46,4 @@ for game in range(1000):
 
         state = next_state
 
-    print('INFO: Round={}, Episode reward={}'.format(game+1, episode_reward))
+    logging.info('Episode={}, Reward={}'.format(game+1, episode_reward))
