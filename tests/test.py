@@ -11,7 +11,6 @@ import sys
 logging.basicConfig(level=logging.DEBUG,
         format='%(asctime)s [%(levelname)s] %(message)s',
         stream=sys.stdout, datefmt='%H:%M:%S')
-sys.path.append('..')
 
 from yuanrl.sarl.apis.PPO import PPO
 

@@ -9,12 +9,13 @@ from torch.nn import functional as F
 from torch.distributions import Categorical
 import torch
 import sys
+import os
 
-sys.path.append('../../..')
+sys.path.append('../')
 
-from sarl.nn.ActorDiscrete import ActorDis
-from sarl.nn.CriticStateOnly import CriticSO
-from sarl.replayer.DQNReplayer import DQNReplayer
+from nn.ActorDiscrete import ActorDis
+from nn.CriticStateOnly import CriticSO
+from replayer.DQNReplayer import DQNReplayer
 
 class SACDiscrete:
     def __init__(

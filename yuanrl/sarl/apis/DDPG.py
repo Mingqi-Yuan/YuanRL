@@ -9,13 +9,14 @@ from torch.nn import functional as F
 import numpy as np
 import torch
 import sys
+import os
 
-sys.path.append('../../..')
+sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 
-from sarl.nn.ActorContinuous import ActorCont
-from sarl.nn.CriticStateAction import CriticSA
-from sarl.replayer.DQNReplayer import DQNReplayer
-from sarl.noise import OUProcess
+from nn.ActorContinuous import ActorCont
+from nn.CriticStateAction import CriticSA
+from replayer.DQNReplayer import DQNReplayer
+from noise.OrnsteinUhlenbeckProcess import OUProcess
 
 class DDPG:
     def __init__(

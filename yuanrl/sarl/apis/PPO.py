@@ -11,12 +11,13 @@ import pandas as pd
 import numpy as np
 import torch
 import sys
+import os
 
-sys.path.append('../../..')
+sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 
-from sarl.nn.ActorDiscrete import ActorDis
-from sarl.nn.CriticStateOnly import CriticSO
-from sarl.replayer.PPOReplayer import PPOReplayer
+from nn.ActorDiscrete import ActorDis
+from nn.CriticStateOnly import CriticSO
+from replayer.PPOReplayer import PPOReplayer
 
 class PPO:
     def __init__(
