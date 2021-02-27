@@ -4,20 +4,17 @@ __author__ = 'Mingqi Yuan'
 Implementation of the Deep deterministic policy gradient algorithm.
 """
 
-from torch import nn, optim
+from torch import optim
 from torch.nn import functional as F
 from torch.distributions import Categorical
-import numpy as np
 import torch
-import copy
 import sys
-import os
 
-sys.path.append('..')
+sys.path.append('../../..')
 
-from nn.ActorDiscrete import ActorDis
-from nn.CriticStateOnly import CriticSO
-from replayer.DQNReplayer import DQNReplayer
+from sarl.nn.ActorDiscrete import ActorDis
+from sarl.nn.CriticStateOnly import CriticSO
+from sarl.replayer.DQNReplayer import DQNReplayer
 
 class SACDiscrete:
     def __init__(

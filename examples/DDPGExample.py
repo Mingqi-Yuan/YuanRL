@@ -8,14 +8,13 @@ import logging
 import torch
 import gym
 import sys
-import os
 
 logging.basicConfig(level=logging.DEBUG,
         format='%(asctime)s [%(levelname)s] %(message)s',
         stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append('..')
 
-from apis.DDPG import DDPG
+from yuanrl.sarl.apis.DDPG import DDPG
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('Pendulum-v0')

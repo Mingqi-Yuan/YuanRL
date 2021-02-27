@@ -7,14 +7,13 @@ import logging
 import torch
 import gym
 import sys
-import os
 
 logging.basicConfig(level=logging.DEBUG,
         format='%(asctime)s [%(levelname)s] %(message)s',
         stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append('..')
 
-from apis.SACDiscrete import SACDiscrete
+from yuanrl.sarl.apis.SACDiscrete import SACDiscrete
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('Acrobot-v1')

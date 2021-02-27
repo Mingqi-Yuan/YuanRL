@@ -4,7 +4,7 @@ __author__ = 'Mingqi Yuan'
 Implementation of the Deep Q-learning algorithm.
 """
 
-from torch import nn, optim
+from torch import optim
 from torch.nn import functional as F
 import numpy as np
 import torch
@@ -13,8 +13,8 @@ import os
 
 sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 
-from nn.QNetworkDiscrete import QND
-from replayer.DQNReplayer import DQNReplayer
+from sarl.nn.QNetworkDiscrete import QND
+from sarl.replayer.DQNReplayer import DQNReplayer
 
 class DeepQ:
     def __init__(
