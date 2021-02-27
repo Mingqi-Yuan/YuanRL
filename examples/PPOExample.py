@@ -12,7 +12,7 @@ import os
 logging.basicConfig(level=logging.DEBUG,
         format='%(asctime)s [%(levelname)s] %(message)s',
         stream=sys.stdout, datefmt='%H:%M:%S')
-sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+sys.path.append('..')
 
 from apis.PPO import PPO
 

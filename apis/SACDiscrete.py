@@ -13,7 +13,7 @@ import copy
 import sys
 import os
 
-sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+sys.path.append('..')
 
 from nn.ActorDiscrete import ActorDis
 from nn.CriticStateOnly import CriticSO

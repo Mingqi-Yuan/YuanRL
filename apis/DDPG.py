@@ -11,7 +11,7 @@ import torch
 import sys
 import os
 
-sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+sys.path.append('..')
 
 from nn.ActorContinuous import ActorCont
 from nn.CriticStateAction import CriticSA

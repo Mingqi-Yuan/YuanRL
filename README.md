@@ -3,7 +3,7 @@
 </div>
 
 
-**YuanRL is a repository which provides Python implementations of the Reinforcement Learning (RL) algorithms.**
+**YuanRL is a repository which provides Python implementations of the Single-Agent Reinforcement Learning (SARL) and Multi-Agent Reinforcement Learning (MARL) algorithms.**
 
 # Installation
 Get the repository:
@@ -26,33 +26,51 @@ We consider dividing the RL algorithms into several parts:
 
 # Implementations
 
-| Algorithm | Type | Paper |Code|
-| ------- | ------- | ------- | ------- |
-| Deep Q-learning | Value-based | [[Paper]](https://arxiv.org/pdf/1312.5602.pdf) | [[Code]](apis/DeepQ.py) |
-| Proximal Policy Optimization | Policy-based | [[Paper]](https://arxiv.org/abs/1707.06347) | [[Code]](apis/PPO.py) |
-| Deep Deterministic Policy Gradient | Policy-based | [[Paper]](https://arxiv.org/pdf/1509.02971.pdf) | [[Code]](apis/DDPG.py) |
-| Soft Actor-Critic Discrete | Policy-based | [[Paper]](https://arxiv.org/pdf/1910.07207) | [[Code]](apis/SACDiscrete.py) |
+* Single-Agent RL algorithms
+
+| Algorithm | Type | On/Off-policy | Paper | Code |
+| ------- | ------- | ------- | ------- |------- |
+| Deep Q-learning | Value-based | Off-policy | [[Paper]](https://arxiv.org/pdf/1312.5602.pdf) | [[Code]](apis/DeepQ.py) |
+| Proximal Policy Optimization | Policy-based | On-policy |[[Paper]](https://arxiv.org/abs/1707.06347) | [[Code]](apis/PPO.py) |
+| Deep Deterministic Policy Gradient | Policy-based | Off-policy |[[Paper]](https://arxiv.org/pdf/1509.02971.pdf) | [[Code]](apis/DDPG.py) |
+| Soft Actor-Critic Discrete | Policy-based | Off-policy |[[Paper]](https://arxiv.org/pdf/1910.07207) | [[Code]](apis/SACDiscrete.py) |
+
+* Multi-Agent RL algorithms
+
+| Algorithm | Type | On/Off-policy | Paper | Code |
+| ------- | ------- | ------- | ------- |------- |
+| QMIX | Value-based | Off-policy | [[Paper]](http://proceedings.mlr.press/v80/rashid18a/rashid18a.pdf) | [[Code]](marl/apis/QMIX.py) |
 
 # Example
-Run the following example code for training a Deep Q-learning agent:
+Run the following example code for training a PPO agent:
 ```python
+import logging
 import torch
 import gym
 import sys
 import os
-sys.path.append(os.path.dirname(__file__) + os.sep + '../')
-from apis.DeepQ import DeepQ
+
+logging.basicConfig(level=logging.DEBUG,
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        stream=sys.stdout, datefmt='%H:%M:%S')
+sys.path.append('..')
+
+from apis.PPO import PPO
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-env = gym.make('MountainCar-v0')
+env = gym.make('Acrobot-v1')
 env.seed(0)
-qnet_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
-agent = DeepQ(
+actor_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
+critic_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': 1}
+
+agent = PPO(
     device=device,
-    qnet_kwargs=qnet_kwargs,
-    state_dim=2,
-    action_dim=3,
-    lr=1e-2
+    state_dim=env.observation_space.shape[0],
+    action_dim=env.action_space.n,
+    actor_kwargs=actor_kwargs,
+    critic_kwargs=critic_kwargs,
+    det=False,
+    lr=1e-3
 )
 
 for game in range(1000):
@@ -61,7 +79,7 @@ for game in range(1000):
     while True:
         action = agent.decide(state)
         next_state, reward, done, info = env.step(action)
-        env.render()
+        # env.render()
         episode_reward += reward
 
         agent.learn(state, action, reward, next_state, done)
@@ -71,5 +89,5 @@ for game in range(1000):
 
         state = next_state
 
-    print('INFO: Round={}, Episode reward={}'.format(game+1, episode_reward))
+    logging.info('Episode={}, Reward={}'.format(game+1, episode_reward))
 ```

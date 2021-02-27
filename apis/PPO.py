@@ -15,7 +15,7 @@ import copy
 import sys
 import os
 
-sys.path.append(os.path.dirname(__file__) + os.sep + '../')
+sys.path.append('..')
 
 from nn.ActorDiscrete import ActorDis
 from nn.CriticStateOnly import CriticSO
@@ -111,7 +111,7 @@ class PPO:
                 self.optimizer_actor.step()
 
                 ''' update critic '''
-                pred_vs = self.critic(state_tensor)
+                pred_vs = self.critic(batch_state)
                 critic_loss_tensor = F.mse_loss(pred_vs[:, 0], batch_return)
                 self.optimizer_critic.zero_grad()
                 critic_loss_tensor.backward()
