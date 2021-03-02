@@ -14,7 +14,7 @@ import os
 sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 
 from nn.QNetworkDiscrete import QND
-from replayer.DQNReplayer import DQNReplayer
+from replayer.QMIXReplayer import DQNReplayer
 
 class DeepQ:
     def __init__(

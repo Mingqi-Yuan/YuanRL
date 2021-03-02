@@ -63,13 +63,13 @@ class PPO:
             df = pd.DataFrame(
                 np.array(self.trajectory, dtype=object).reshape(-1, 4),
                 columns=['state', 'action', 'reward', 'done'])
-            state_tensor = torch.FloatTensor(np.stack(df['state']))
-            action_tensor = torch.from_numpy(np.stack(df['action']).astype('int64'))
+            state_tensor = torch.FloatTensor(np.stack(df['state'])).to(self.device)
+            action_tensor = torch.from_numpy(np.stack(df['action']).astype('int64')).to(self.device)
             v_tensor = self.critic(state_tensor)
-            df['v'] = v_tensor.detach().numpy()
+            df['v'] = v_tensor.detach().cpu().numpy()
             prob_tensor = self.actor(state_tensor)
             pi_tensor = prob_tensor.gather(1, action_tensor.unsqueeze(1)).squeeze(1)
-            df['prob'] = pi_tensor.detach().numpy()
+            df['prob'] = pi_tensor.detach().cpu().numpy()
             df['next_v'] = df['v'].shift(-1).fillna(0.)
             df['u'] = df['reward'] + self.gamma * df['next_v']
             df['delta'] = df['u'] - df['v']

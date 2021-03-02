@@ -15,7 +15,7 @@ sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 
 from nn.ActorContinuous import ActorCont
 from nn.CriticStateAction import CriticSA
-from replayer.DQNReplayer import DQNReplayer
+from replayer.QMIXReplayer import DQNReplayer
 from noise.OrnsteinUhlenbeckProcess import OUProcess
 
 class DDPG:

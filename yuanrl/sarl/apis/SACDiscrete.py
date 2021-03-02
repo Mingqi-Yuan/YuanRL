@@ -11,11 +11,11 @@ import torch
 import sys
 import os
 
-sys.path.append('../')
+sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 
 from nn.ActorDiscrete import ActorDis
 from nn.CriticStateOnly import CriticSO
-from replayer.DQNReplayer import DQNReplayer
+from replayer.QMIXReplayer import DQNReplayer
 
 class SACDiscrete:
     def __init__(
