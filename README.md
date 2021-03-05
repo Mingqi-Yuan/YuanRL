@@ -38,6 +38,7 @@ We consider dividing the RL algorithms into several parts:
 | ------- | ------- | ------- | ------- | ------- | ------- |
 | Deep Q-learning | Value-based | Off-policy | Discrete | [[Paper]](https://arxiv.org/pdf/1312.5602.pdf) | [[Code]](yuanrl/sarl/apis/DeepQ.py) |
 | Proximal Policy Optimization | Policy-based | On-policy| Discrete |[[Paper]](https://arxiv.org/abs/1707.06347) | [[Code]](yuanrl/sarl/apis/PPO.py) |
+| Trust Region Policy Optimization | Policy-based | On-policy| Discrete |[[Paper]](https://spinningup.openai.com/en/latest/algorithms/trpo.html#) | [[Code]](yuanrl/sarl/apis/TRPO.py) |
 | Deep Deterministic Policy Gradient | Policy-based | Off-policy| Continuous |[[Paper]](https://arxiv.org/pdf/1509.02971.pdf) | [[Code]](yuanrl/sarl/apis/DDPG.py) |
 | Soft Actor-Critic Discrete | Policy-based | Off-policy| Discrete |[[Paper]](https://arxiv.org/pdf/1910.07207) | [[Code]](yuanrl/sarl/apis/SACDiscrete.py) |
 

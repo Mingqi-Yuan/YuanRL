@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="yuanrl", # Replace with your own username
-    version="0.0.4",
+    version="0.0.5",
     author="Mingqi Yuan",
     author_email="friedrichyuan19990827@gmail.com",
     description="Implementations of the Single-Agent Reinforcement Learning (SARL) and Multi-Agent Reinforcement Learning (MARL) algorithms.",

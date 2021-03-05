@@ -1,7 +1,7 @@
 # -*- coding:utf-8 -*-
 __author__ = 'Mingqi Yuan'
 """
-An example of the PPO.
+An example of the TRPO.
 """
 import logging
 import torch
@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG,
         stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append('..')
 
-from yuanrl.sarl.apis.PPO import PPO
+from yuanrl.sarl.apis.TRPO import TRPO
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('Acrobot-v1')
@@ -21,7 +21,7 @@ env.seed(0)
 actor_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': env.action_space.n}
 critic_kwargs = {'input_dim': env.observation_space.shape[0], 'output_dim': 1}
 
-agent = PPO(
+agent = TRPO(
     device=device,
     state_dim=env.observation_space.shape[0],
     action_dim=env.action_space.n,
