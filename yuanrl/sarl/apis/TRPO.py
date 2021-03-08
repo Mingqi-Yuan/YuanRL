@@ -32,7 +32,8 @@ class TRPO:
             max_kl=0.01,
             lr=1e-4,
             batch_size=64,
-            batches=1
+            batches=1,
+            max_grad_norm=0.5
     ):
         self.device = device
         self.state_dim = state_dim
@@ -42,6 +43,7 @@ class TRPO:
         self.lr = lr
         self.batch_size = batch_size
         self.batches = batches
+        self.max_grad_norm = max_grad_norm
 
         self.det = det
         self.actor = ActorDis(actor_kwargs)
@@ -149,6 +151,7 @@ class TRPO:
                 critic_loss_tensor = F.mse_loss(pred_vs[:, 0], batch_return)
                 self.optimizer_critic.zero_grad()
                 critic_loss_tensor.backward()
+                torch.nn.utils.clip_grad_norm(self.critic.parameters(), self.max_grad_norm)
                 self.optimizer_critic.step()
 
             ''' reset the replayer '''

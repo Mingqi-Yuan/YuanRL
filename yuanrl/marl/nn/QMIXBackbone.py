@@ -34,7 +34,6 @@ class MultiAgent(nn.Module):
         all_local_qs = []
         all_h = []
 
-
         for idx, agent in enumerate(self.all_agents):
             if flag == 'eval':
                 ls_tensor = torch.FloatTensor(local_state[idx]).unsqueeze(0).to(self.device)

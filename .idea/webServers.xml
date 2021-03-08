@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="d0c5ec24-918a-46e5-8935-20a34000f736" name="CUHK RTX3090">
+        <fileTransfer rootFolder="/export/yuanmingqi/code" accessType="SFTP" host="10.20.7.56" port="22" sshConfigId="f809006d-bac0-4350-8182-d452331abaee" sshConfig="cuhk@10.20.7.56:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
