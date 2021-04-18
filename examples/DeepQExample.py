@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG,
         stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append('..')
 
-from yuanrl.sarl.apis.DeepQ import DeepQ
+from yuanrl.apis.DeepQ import DeepQ
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('MountainCar-v0')

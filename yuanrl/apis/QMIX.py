@@ -6,7 +6,6 @@ Implementation of the QMIX algorithm.
 
 from torch import optim
 from torch.nn import functional as F
-import numpy as np
 import itertools
 import torch
 import sys
@@ -14,8 +13,8 @@ import os
 
 sys.path.append(os.path.dirname(__file__) + os.sep + '../')
 
-from nn.QMIXBackbone import MultiAgent, MixingNet
-from replayer.QMIXReplayer import QMIXReplayer
+from yuanrl.nn.QMIXBackbone import MultiAgent, MixingNet
+from yuanrl.replayer.QMIXReplayer import QMIXReplayer
 
 '''
 gs: global state

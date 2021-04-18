@@ -36,11 +36,11 @@ We consider dividing the RL algorithms into several parts:
 
 | Algorithm | Type | On/Off-policy | Available task |Paper | Code |
 | ------- | ------- | ------- | ------- | ------- | ------- |
-| Deep Q-learning | Value-based | Off-policy | Discrete | [[Paper]](https://arxiv.org/pdf/1312.5602.pdf) | [[Code]](yuanrl/sarl/apis/DeepQ.py) |
-| Proximal Policy Optimization | Policy-based | On-policy| Discrete |[[Paper]](https://arxiv.org/abs/1707.06347) | [[Code]](yuanrl/sarl/apis/PPO.py) |
-| Trust Region Policy Optimization | Policy-based | On-policy| Discrete |[[Paper]](https://spinningup.openai.com/en/latest/algorithms/trpo.html#) | [[Code]](yuanrl/sarl/apis/TRPO.py) |
-| Deep Deterministic Policy Gradient | Policy-based | Off-policy| Continuous |[[Paper]](https://arxiv.org/pdf/1509.02971.pdf) | [[Code]](yuanrl/sarl/apis/DDPG.py) |
-| Soft Actor-Critic Discrete | Policy-based | Off-policy| Discrete |[[Paper]](https://arxiv.org/pdf/1910.07207) | [[Code]](yuanrl/sarl/apis/SACDiscrete.py) |
+| Deep Q-learning | Value-based | Off-policy | Discrete | [[Paper]](https://arxiv.org/pdf/1312.5602.pdf) | [[Code]](yuanrl/apis/DeepQ.py) |
+| Proximal Policy Optimization | Policy-based | On-policy| Discrete |[[Paper]](https://arxiv.org/abs/1707.06347) | [[Code]](yuanrl/apis/PPO.py) |
+| Trust Region Policy Optimization | Policy-based | On-policy| Discrete |[[Paper]](https://spinningup.openai.com/en/latest/algorithms/trpo.html#) | [[Code]](yuanrl/apis/TRPO.py) |
+| Deep Deterministic Policy Gradient | Policy-based | Off-policy| Continuous |[[Paper]](https://arxiv.org/pdf/1509.02971.pdf) | [[Code]](yuanrl/apis/DDPG.py) |
+| Soft Actor-Critic Discrete | Policy-based | Off-policy| Discrete |[[Paper]](https://arxiv.org/pdf/1910.07207) | [[Code]](yuanrl/apis/SACDiscrete.py) |
 
 Note that the "available task" here means the implemented version of the algorithm, which does not represent that an
 algorithm can only handle single-type task. For instance, the PPO can handle not only discrete tasks but also continuous tasks, but we
@@ -50,7 +50,16 @@ only implement the discrete version here.
 
 | Algorithm | Type | On/Off-policy | Available task |Paper | Code |
 | ------- | ------- | ------- | ------- | ------- | ------- |
-| QMIX | Value-based | Off-policy | Discrete |[[Paper]](http://proceedings.mlr.press/v80/rashid18a/rashid18a.pdf) | [[Code]](yuanrl/marl/apis/QMIX.py) |
+| QMIX | Value-based | Off-policy | Discrete |[[Paper]](http://proceedings.mlr.press/v80/rashid18a/rashid18a.pdf) | [[Code]](yuanrl/apis/QMIX.py) |
+
+* Curiosity Modules in RL
+
+The curiosity modules provide intrinsic reward signal (IRS) for the agents, which motivates the agents to make comprehensive explorations. 
+  
+| Algorithm | Type | Number of networks | Paper | Code |
+| ------- | ------- | ------- | ------- | ------- |
+| End-to-end curiosity module | Unified encoder-decoder | 1 |[[Paper]](https://arxiv.org/pdf/2102.02454) | [[Code]](yuanrl/curiosity/E2ECuriosityModule.py) |
+
 
 # Example
 Run the following example code for training a PPO agent:
@@ -67,7 +76,7 @@ logging.basicConfig(level=logging.DEBUG,
                     stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append('..')
 
-from yuanrl.sarl.apis.PPO import PPO
+from yuanrl.apis.PPO import PPO
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('Acrobot-v1')

@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG,
         stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append('..')
 
-from yuanrl.sarl.apis.DDPG import DDPG
+from yuanrl.apis.DDPG import DDPG
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('Pendulum-v0')

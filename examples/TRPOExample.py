@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG,
         stream=sys.stdout, datefmt='%H:%M:%S')
 sys.path.append('..')
 
-from yuanrl.sarl.apis.TRPO import TRPO
+from yuanrl.apis.TRPO import TRPO
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 env = gym.make('Acrobot-v1')

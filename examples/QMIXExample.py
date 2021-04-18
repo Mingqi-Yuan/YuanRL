@@ -5,14 +5,13 @@ An example of the QMIX.
 """
 import logging
 import torch
-import gym
 import sys
 
 logging.basicConfig(level=logging.DEBUG,
         format='%(asctime)s [%(levelname)s] %(message)s',
         stream=sys.stdout, datefmt='%H:%M:%S')
 
-from yuanrl.marl.apis.QMIX import QMIX
+from yuanrl.apis.QMIX import QMIX
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
