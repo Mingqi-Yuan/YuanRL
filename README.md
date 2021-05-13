@@ -14,7 +14,7 @@ pip install yuanrl -i https://pypi.org/simple/
 
 * Get the repository with git:
 ```
-git clone https://github.com/Mingqi-Yuan/YuanRL.git
+git clone https://github.com/yuanmingqi/YuanRL.git
 ```
 
 * Run the following command to get dependency:
